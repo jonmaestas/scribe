@@ -23,6 +23,9 @@ This project is born from the idea of "bringing receipts" for the life you lead/
 - **Low Power:** Runs on a single USB port, no separate power supply needed (about 0.5W at idle)
 - **Open Source:** Completely free, hackable, and customisable
 
+![_DSC1138](https://github.com/user-attachments/assets/1f33aab6-29e9-4424-9ca8-0320b34d61a2)
+
+
 ## BOM
 
 - D1 mini board (any Arduino board will do, but you will have to adjust the sketch)
