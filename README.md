@@ -23,7 +23,8 @@ This project is born from the idea of "bringing receipts" for the life you lead/
 - **Low Power:** Runs on a single USB port, no separate power supply needed (about 0.5W at idle)
 - **Open Source:** Completely free, hackable, and customisable
 
-![_DSC1138](https://github.com/user-attachments/assets/1f33aab6-29e9-4424-9ca8-0320b34d61a2)
+
+![pic for profiles](https://github.com/user-attachments/assets/56afd51b-3560-419a-93f4-af315ba2968f)
 
 
 ## BOM
@@ -68,7 +69,7 @@ The project uses SoftwareSerial to communicate with the printer, leaving the har
 
 ## Microcontroller firmware
 
-One sketch file, using the IDE of your choice (e.g. the main Arduino IDE works well with the added modules for D1 mini + libraries - that's what I use).
+One sketch file, using the IDE of your choice (e.g. the main Arduino IDE works well with the added modules for D1 mini + libraries - that's what I use). Make sure you update the firmware variables before flashing it to the MCU (e.g. wifi details and other preferences you might choose to tweak).
 
 Please check everything is working before soldering and squeezing everything into the 3D printed shell.
 
