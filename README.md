@@ -45,11 +45,11 @@ Affiliate links to grab the components (if you want to use them):
 | Thermal Printer (CSN-A4L)         | https://amzn.to/4kr5ksq | -                       | https://s.click.aliexpress.com/e/_opjoNrw |
 | Paper Rolls, BPA-free (57.5x30mm) | https://amzn.to/4kpOREP | https://amzn.to/44nqGCg | -                                         |
 
-Note: The components might be slightly different as listings always change silently - always check. If you notice any issues, please ping me to update the readme.
+Importnat Note: Do your own due diligence regarding thermal paper types - a lot of the thermal paper we handle everday (e.g. through receipts from the grocery store, restaurants, takeaway, taxis, etc.) most likely contains BPA. When choosing your rolls for this, you should definitely go for BPA-free paper just to be on the safer side - the links I provided are for BPA-free paper. However, if you can, I'd recommend you go a step further and go for phenol-free, which uses some alternative developers, e.g. vitamin C derivatives.
 
-Note2: If you don't have a 3D printer but would like to build this, consider using the PCBWay affiliate link: https://pcbway.com/g/86cN6v (discount to you + some small help for the project).
+Note2: The components might be slightly different as listings always change silently - always check. If you notice any issues, please ping me to update the readme.
 
-Note3: Some thermal paper uses a plastic-like coating on top of the regular paper underneath. When choosing the rolls, you should definitely go for BPA-A free - however, I'd recommend you go for phenol-free, which uses some alternative developers, e.g. vitamin C derivatives.
+Note3: If you don't have a 3D printer but would like to build this, consider using the PCBWay affiliate link: https://pcbway.com/g/86cN6v (discount to you + some small help for the project).
 
 Note4: Some thermal paper is treated against fading - can last e.g. 35+ years. If you're planning on using Scribe for archival purposes, consider ink fading when picking up the right rolls.
 
@@ -154,4 +154,4 @@ Thermal Printer Manual, in case you need to look into things further: https://ww
 ## Disclaimer
 
 I've done my best to document everything accurately - however, there might be mistakes. If you see them, or opportunities to improve, please open an issue.  
-This is an open-source project given for free, with no warranties or guarantees. It assumes a level of proficiency with electronics, assemblies, engineering, etc. Stay safe. Stay productive. Work with what you have. Make the world a better place.
+This is an open-source project given for free, with no warranties or guarantees. It assumes a level of proficiency with electronics, assemblies, engineering, etc. Do your own due diligence - it's your responsibility. Stay safe. Stay productive. Work with what you have. Make the world a better place.
