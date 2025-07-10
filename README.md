@@ -45,7 +45,7 @@ Affiliate links to grab the components (if you want to use them):
 | Thermal Printer (CSN-A4L)         | https://amzn.to/4kr5ksq | -                       | https://s.click.aliexpress.com/e/_opjoNrw |
 | Paper Rolls, BPA-free (57.5x30mm) | https://amzn.to/4kpOREP | https://amzn.to/44nqGCg | -                                         |
 
-Importnat Note: Do your own due diligence regarding thermal paper types - a lot of the thermal paper we handle everday (e.g. through receipts from the grocery store, restaurants, takeaway, taxis, etc.) most likely contains BPA. When choosing your rolls for this, you should definitely go for BPA-free paper just to be on the safer side - the links I provided are for BPA-free paper. However, if you can, I'd recommend you go a step further and go for phenol-free, which uses some alternative developers, e.g. vitamin C derivatives.
+Important Note: Do your own due diligence regarding thermal paper types - a lot of the thermal paper we handle everyday (e.g. through receipts from the grocery store, restaurants, takeaway, taxis, etc.) most likely contains BPA. When choosing your rolls for this, you should definitely go for BPA-free paper just to be on the safer side - the links I provided are for BPA-free paper. However, if you can, I'd recommend you go a step further and go for phenol-free, which uses some alternative developers, e.g. vitamin C derivatives.
 
 Note2: The components might be slightly different as listings always change silently - always check. If you notice any issues, please ping me to update the readme.
 
