@@ -21,8 +21,8 @@ void advancePaper(int lines);
 void printWrappedUpsideDown(String text);
 
 // === WiFi Configuration ===
-const char* ssid = "Your WIFI name";
-const char* password = "Your WIFI password";
+const char* ssid = "ssid";
+const char* password = "password";
 
 // === Time Configuration ===
 const long utcOffsetInSeconds = 0; // UTC offset in seconds (0 for UTC, 3600 for UTC+1, etc.)
@@ -33,7 +33,7 @@ NTPClient timeClient(ntpUDP, "pool.ntp.org", utcOffsetInSeconds, 60000);
 ESP8266WebServer server(80);
 
 // === Printer Setup ===
-SoftwareSerial printer(D4, D3); // Use D4 (TX, GPIO2), D3 (RX, GPIO0)
+SoftwareSerial printer(D2, D1); // Use D4 (TX, GPIO2), D3 (RX, GPIO0)
 const int maxCharsPerLine = 32;
 
 // === Storage for form data ===
@@ -334,14 +334,24 @@ void initializePrinter() {
   
   // Set stronger black fill (print density/heat)
   printer.write(0x1B); printer.write('7');
-  printer.write(15); // Heating dots (max 15)
+  printer.write(10); // Heating dots (max 15)
   printer.write(150); // Heating time
-  printer.write(250); // Heating interval
+  printer.write(50); // Heating interval
   
   // Enable 180° rotation (which also reverses the line order)
   printer.write(0x1B); printer.write('{'); printer.write(0x01); // ESC { 1
   
   Serial.println("Printer initialized");
+}
+
+void setBold(bool on) {
+  printer.write(0x1B); printer.write('E'); printer.write(on ? 1 : 0); // ESC E n
+}
+void setAlign(uint8_t n) { // 0=left,1=center,2=right
+  printer.write(0x1B); printer.write('a'); printer.write(n);
+}
+void setSize(uint8_t n) {  // 0=normal, 0x10=2x height, 0x20=2x width, 0x30=2x both
+  printer.write(0x1D); printer.write('!'); printer.write(n);
 }
 
 void printReceipt() {
@@ -351,9 +361,15 @@ void printReceipt() {
   printWrappedUpsideDown(currentReceipt.message);
   
   // Print header last (appears at top after rotation)
-  setInverse(true);
+  setAlign(1);
+  // printLine("_.-._.-._.-._");
+  // setSize(0x10);  // double height
+  printLine("---");
   printLine(currentReceipt.timestamp);
-  setInverse(false);
+  printLine("---");
+  // setSize(0);
+  // printLine("-._.-._.-._.-");
+  setAlign(0);
   
   // Advance paper
   advancePaper(2);
@@ -375,9 +391,9 @@ void printServerInfo() {
   String serverInfo = "Server started at " + WiFi.localIP().toString();
   printWrappedUpsideDown(serverInfo);
   
-  setInverse(true);
   printLine("PRINTER SERVER READY");
-  setInverse(false);
+  printLine("http://" + WiFi.localIP().toString());
+
   
   advancePaper(3);
 }
