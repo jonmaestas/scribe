@@ -13,17 +13,18 @@
 //   white usually printer RX, black signal ground. Read the print on the
 //   insulation. Do not land the TTL red wire on a GPIO.
 //
-// Bench: D1 receives, D2 transmits.
-// Printer TX (usually yellow) -> D1. Printer RX (usually white) <- D2.
-#define PRINTER_RX_PIN D1
-#define PRINTER_TX_PIN D2
-#define PRINTER_RX_NAME "D1"
-#define PRINTER_TX_NAME "D2"
+// Bench retry: D2 receives, D1 transmits.
+// Printer TX (usually yellow) -> D2. Printer RX (usually white) <- D1.
+#define PRINTER_RX_PIN D2
+#define PRINTER_TX_PIN D1
+#define PRINTER_RX_NAME "D2"
+#define PRINTER_TX_NAME "D1"
 #define PRINTER_BAUD 9600
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 #include <SoftwareSerial.h>
+#include <ArduinoOTA.h>
 
 #if __has_include("secrets.h")
 #include "secrets.h"
@@ -61,6 +62,14 @@ bool printing = false;
 bool announced = false;
 bool wifiWarned = false;
 unsigned long lastWifiRetry = 0;
+// ESC 7: max heat dots per burst ((n+1)*8), heat time and rest interval in 10 us.
+// Tuned on the bench (MC206H on a 5 V breadboard module): 32 dots per burst
+// at max heat time prints dark without browning out. Tune live with POST /heat.
+uint8_t heatDots = 3;
+uint8_t heatTime = 255;
+uint8_t heatInterval = 120;
+// Pause after each printed line (ms) so the 5 V regulator recovers. Slow is fine.
+uint8_t lineDelay = 60;
 
 void connectWifi();
 void announce();
@@ -70,7 +79,7 @@ void handleRoot();
 void handleHealth();
 void handlePrint();
 void handleTest();
-void handleNotFound();
+void handleHeat();
 bool parseJob(const String& body, String& error);
 bool addText(uint8_t size, uint8_t bold, uint8_t inverse, const String& payload, String& error);
 bool addFeed(int n, String& error);
@@ -89,6 +98,10 @@ void setup() {
   connectWifi();
   setupRoutes();
   server.begin();
+  // Firmware updates over Wi-Fi (port 8266), so the USB cable can stay on power.
+  ArduinoOTA.setHostname("scribe");
+  if (strlen(SCRIBE_TOKEN) > 0) ArduinoOTA.setPassword(SCRIBE_TOKEN);
+  ArduinoOTA.begin();
   announce();
   if (WiFi.status() != WL_CONNECTED && !wifiWarned) {
     wifiWarned = true;
@@ -102,6 +115,7 @@ void setup() {
 
 void loop() {
   server.handleClient();
+  ArduinoOTA.handle();
   MDNS.update();
   if (WiFi.status() == WL_CONNECTED) {
     announce();
@@ -156,6 +170,7 @@ void setupRoutes() {
   server.on("/print", HTTP_POST, handlePrint);
   server.on("/print", HTTP_GET, handlePrint);
   server.on("/test", HTTP_POST, handleTest);
+  server.on("/heat", HTTP_POST, handleHeat);
   server.onNotFound(handleNotFound);
 }
 
@@ -195,7 +210,15 @@ void handleHealth() {
   body += PRINTER_RX_NAME;
   body += "\",\"baud\":";
   body += String(PRINTER_BAUD);
-  body += ",\"wifi\":";
+  body += ",\"heat\":[";
+  body += String(heatDots);
+  body += ",";
+  body += String(heatTime);
+  body += ",";
+  body += String(heatInterval);
+  body += ",";
+  body += String(lineDelay);
+  body += "],\"wifi\":";
   body += WiFi.status() == WL_CONNECTED ? "true" : "false";
   body += "}";
   server.send(200, "application/json", body);
@@ -251,6 +274,25 @@ void handleTest() {
   runJob();
   printing = false;
   server.send(200, "text/plain", "ok\n");
+}
+
+void handleHeat() {
+  if (!authorized()) {
+    server.send(401, "text/plain", "unauthorized\n");
+    return;
+  }
+  const char* names[] = {"dots", "time", "interval", "pace"};
+  uint8_t* targets[] = {&heatDots, &heatTime, &heatInterval, &lineDelay};
+  for (int i = 0; i < 4; i++) {
+    if (!server.hasArg(names[i])) continue;
+    long value = server.arg(names[i]).toInt();
+    if (value < 0 || value > 255 || (i == 1 && value < 3)) {
+      server.send(400, "text/plain", String(names[i]) + " out of range\n");
+      return;
+    }
+    *targets[i] = (uint8_t)value;
+  }
+  handleHealth();
 }
 
 void handleNotFound() {
@@ -382,9 +424,9 @@ void preparePrinter(bool upsideDown) {
   delay(80);
   printer.write(0x1B);
   printer.write('7');
-  printer.write(10);
-  printer.write(150);
-  printer.write(50);
+  printer.write(heatDots);
+  printer.write(heatTime);
+  printer.write(heatInterval);
   printer.write(0x1B);
   printer.write('t');
   printer.write((uint8_t)0);
@@ -426,6 +468,7 @@ void printOp(const Op& op) {
   setModes(op.size, op.bold, op.inverse);
   printer.print(op.text);
   printer.write('\n');
+  delay(lineDelay);
   yield();
 }
 

@@ -65,7 +65,7 @@ paseo schedule create \
   "$(cat prompts/morning-weather.md)"
 ```
 
-The prompt tells the agent to stop if the printer is down. It is not armed yet. The device is not on the network.
+The prompt tells the agent to stop if the printer is down. It is not armed yet.
 
 ## Firmware
 
@@ -75,31 +75,51 @@ The prompt tells the agent to stop if the printer is down. It is not armed yet. 
 cp "firmware/scribe/secrets.example.h" "firmware/scribe/secrets.h"
 ```
 
-Put the Wi-Fi name and password in `secrets.h`, then flash. On boot the printer should drop a slip with its IP, and `http://scribe.local/health` should answer.
+Put the Wi-Fi name and password in `secrets.h`. The first flash is over USB. Switch the breadboard supply off while the D1 is on the Mac. After that, update over Wi-Fi:
+
+```bash
+arduino-cli compile --fqbn esp8266:esp8266:d1_mini --output-dir /tmp/scribe-build firmware/scribe
+python3 ~/Library/Arduino15/packages/esp8266/hardware/esp8266/*/tools/espota.py \
+  -i <printer-ip> -p 8266 -f /tmp/scribe-build/scribe.ino.bin
+```
+
+On boot the printer drops a slip with its IP. `GET http://<printer-ip>/health` answers with pins and heat settings.
 
 The host sends a line protocol (`scribe/render.py`). The board prints those lines. It does not fetch weather.
 
 `drape` defaults on, so a slip hung down the front reads top to bottom. If yours comes out upside down, set `"drape": false` in `config.json`. No reflash.
 
+### Darkness and speed
+
+`POST http://<printer-ip>/heat?dots=3&time=255&interval=120&pace=60` changes print settings until the next reboot. The defaults in `scribe.ino` are those bench values.
+
+| arg | meaning | effect |
+| --- | --- | --- |
+| `dots` | heat `(n+1)*8` dots per burst | lower = less current, darker on a weak supply, slower |
+| `time` | heat time per burst, 10 µs units, max 255 | higher = darker |
+| `interval` | rest between bursts, 10 µs units | higher = less current, slower |
+| `pace` | pause after each line, ms | higher = supply recovers, slower |
+
+Faint print means low heat or a sagging supply. Lower `dots` before raising anything else.
+
 ## Wiring
 
-Do not power the printer from the D1 Mini. The head draws about 2 A while printing. The 2-pin red/black plug is heater power: red to a separate 5 V supply, black to that supply's ground and to D1 `G`. Power the D1 from USB or from the 5 V pin, never both.
+The printer must not draw its power through the D1. On the bench, a 5 V 3 A supply in the D1's micro-USB, feeding the printer through the D1's 5V pin, moved paper and browned out on any real print. The fix was a breadboard power module (5 V setting) fed by a 12 V 2.5 A adapter, powering the rail. The printer's 2-pin `VCC`/`GND` and the D1's `5V`/`G` both sit on that rail. The D1's USB stays empty unless the module is switched off.
 
-The 4-wire plug is serial. Read the legend on the insulation. Usual colors: yellow = printer TX, white = printer RX, black = signal ground. Cross them. The red wire in that plug does not go to a GPIO. Cap it unless you already know what it is.
+The printer's own USB port (`5V`, `D-`, `D+`, `GND`) does not power this MC206H.
 
-These heads are often 5 V TTL. D1 pins are 3.3 V. Put 1 kΩ in series on printer TX into the D1 receive pin until the level is known.
+Serial plug, from the printer's molded labels: red `DTR`, yellow `TX`, white `RX`, black `GND`. DTR is the printer's busy output. Leave it unconnected. Never tie it to ground or VCC.
 
-Pins, confirmed on the bench: the D1 Mini receives on D1 and transmits on D2.
+| Printer | Wire | D1 Mini |
+| --- | --- | --- |
+| VCC | red | + rail |
+| GND | green | − rail |
+| TX | yellow | D2 (receive) |
+| RX | white | D1 (transmit) |
+| GND | green | − rail |
+| DTR | red | not connected |
 
-| Printer | D1 Mini |
-| --- | --- |
-| TX (usually yellow) | D1 |
-| RX (usually white) | D2 |
-| GND | G |
-
-D3 and D4 are boot straps. Nothing belongs on them. Confirm with a continuity beep before flashing if the harness changes.
-
-Nothing belongs on D8. It has to be free at boot.
+D1 Mini: `5V` red to + rail, `G` green to − rail. Nothing on D3, D4 (boot straps) or D8.
 
 ## Layout
 
