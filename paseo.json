@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "scribe": {
+      "type": "service",
+      "command": "python3 -m scribe serve",
+      "port": 8787
+    }
+  }
+}

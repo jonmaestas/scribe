@@ -1,0 +1,16 @@
+{
+  "printer_url": "http://scribe.local",
+  "listen": "0.0.0.0",
+  "port": 8787,
+  "token": "",
+  "timezone": "America/Chicago",
+  "location_name": "",
+  "latitude": null,
+  "longitude": null,
+  "units": "fahrenheit",
+  "drape": true,
+  "copies_max": 2,
+  "max_prints_per_hour": 40,
+  "min_interval_seconds": 2,
+  "styles_file": "styles.json"
+}
