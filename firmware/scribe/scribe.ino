@@ -152,8 +152,7 @@ void announce() {
 }
 
 void setupRoutes() {
-  const char* headers[] = {"X-Scribe-Token", "Content-Length"};
-  server.collectHeaders(headers, 2);
+  server.collectHeaders("X-Scribe-Token", "Content-Length");
   server.on("/", HTTP_GET, handleRoot);
   server.on("/health", HTTP_GET, handleHealth);
   server.on("/print", HTTP_POST, handlePrint);
