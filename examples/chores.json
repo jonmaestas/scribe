@@ -1,0 +1,6 @@
+{
+  "template": "list",
+  "style": "ticket",
+  "title": "Saturday",
+  "items": ["Groceries", "Library books", "Mow the yard"]
+}

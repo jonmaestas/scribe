@@ -1,0 +1,7 @@
+{
+  "template": "message",
+  "style": "poster",
+  "title": "Dinner",
+  "body": "Tacos at 6. Be home.",
+  "from": "Dad"
+}

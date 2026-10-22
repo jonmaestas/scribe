@@ -1,0 +1,8 @@
+{
+  "headline": {
+    "base": "poster",
+    "description": "Three-times title. One or two words.",
+    "title": {"size": 3, "bold": true, "align": "center", "inverse": false},
+    "feed": 6
+  }
+}
