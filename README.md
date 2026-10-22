@@ -89,15 +89,15 @@ The 4-wire plug is serial. Read the legend on the insulation. Usual colors: yell
 
 These heads are often 5 V TTL. D1 pins are 3.3 V. Put 1 kΩ in series on printer TX into the D1 receive pin until the level is known.
 
-Pins the firmware talks on, matching the sketch that used to be in this repo:
+Pins, confirmed on the bench: the D1 Mini receives on D1 and transmits on D2.
 
 | Printer | D1 Mini |
 | --- | --- |
-| TX (usually yellow) | D2 |
-| RX (usually white) | D1 |
+| TX (usually yellow) | D1 |
+| RX (usually white) | D2 |
 | GND | G |
 
-D3 and D4 are boot straps. The old README named them, and the old sketch's comment named them, but the code used D2 and D1. The close-up shows duponts on D4, D3, D2, D1, and RX. Confirm with a continuity beep before flashing. If the data pair is not D2/D1, change `PRINTER_RX_PIN`, `PRINTER_TX_PIN`, and the two `*_NAME` defines at the top of `scribe.ino`, then flash again.
+D3 and D4 are boot straps. Nothing belongs on them. Confirm with a continuity beep before flashing if the harness changes.
 
 Nothing belongs on D8. It has to be free at boot.
 

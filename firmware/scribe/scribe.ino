@@ -13,14 +13,12 @@
 //   white usually printer RX, black signal ground. Read the print on the
 //   insulation. Do not land the TTL red wire on a GPIO.
 //
-// The sketch previously in this repo called SoftwareSerial(D2, D1): receive
-// on D2, transmit on D1. The README said D3/D4, and that comment disagreed
-// with the code. D3 (GPIO0) and D4 (GPIO2) are boot straps. Default to the
-// old sketch. If continuity says otherwise, change only these four lines.
-#define PRINTER_RX_PIN D2
-#define PRINTER_TX_PIN D1
-#define PRINTER_RX_NAME "D2"
-#define PRINTER_TX_NAME "D1"
+// Bench: D1 receives, D2 transmits.
+// Printer TX (usually yellow) -> D1. Printer RX (usually white) <- D2.
+#define PRINTER_RX_PIN D1
+#define PRINTER_TX_PIN D2
+#define PRINTER_RX_NAME "D1"
+#define PRINTER_TX_NAME "D2"
 #define PRINTER_BAUD 9600
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
